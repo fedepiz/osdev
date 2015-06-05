@@ -1,7 +1,7 @@
 AS = i686-elf-as
 CC = i686-elf-g++
 
-INCLUDE_DIR = src
+INCLUDE_DIR = include
 
 CFLAGS = -c -I$(INCLUDE_DIR) -ffreestanding -nostdlib -O2 -Wall -Wextra -Wno-write-strings -Wno-unused-parameter \
          -fno-exceptions -fno-rtti

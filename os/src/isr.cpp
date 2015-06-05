@@ -1,7 +1,5 @@
 #include <system.h>
-#include <isr.h>
-#include <idt.h>
-#include <scrn.h>
+
 
 extern "C" void _isr0();
 extern "C" void _isr1();

@@ -1,4 +1,3 @@
-#include<scrn.h>
 #include<system.h>
 
 /* These define our textpointer, our background and foreground

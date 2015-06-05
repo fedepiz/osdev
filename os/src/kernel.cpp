@@ -1,9 +1,4 @@
 #include <system.h>
-#include <scrn.h> 
-#include <gdt.h>
-#include <idt.h>
-#include <isr.h>
-#include <irq.h>
 #include <timer.h>
 
 void startup_checklist() {

@@ -1,7 +1,5 @@
 #include <system.h>
-#include <idt.h>
-#include <irq.h>
-#include <scrn.h> 
+
 
 
 extern "C" void _irq0 ();

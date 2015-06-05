@@ -1,6 +1,4 @@
 #include <system.h>
-#include <scrn.h>
-#include <irq.h>
 
 void timer_phase(int hz)
 {
