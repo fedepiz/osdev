@@ -1,4 +1,6 @@
 #include <system.h>
+#include <multiboot.h>
+#include <mmap.h>
 #include <timer.h>
 #include <keyboard.h>
 
@@ -32,12 +34,15 @@ void init_devices() {
 	keyboard_install();
 }
 
+extern "C" unsigned long kernel_end;
+
 #if defined(__cplusplus)
 extern "C" /* Use C linkage for kernel_main. */
 #endif
-void kernel_main() {
+void kernel_main(multiboot_info_t* mbd, unsigned int magic) {
 	startup_checklist();
 	cls();
-	putn(52);
-	puts("\nWelcome to PizOS 0.0000000.....000001\n");
+	puth(kernel_end);
+	puts("Welcome to PizOS 0.0000000.....000001\n");
+	print_memory_map_info(mbd);
 }

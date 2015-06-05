@@ -56,9 +56,7 @@ void reverse(char* str, int length)
    }
 }
 
-char* itoa(int num, char* str)
-{
-	int base = 10;
+char* itoa_base(int num, char* str,int base) {
     int i = 0;
     bool isNegative = false;
  
@@ -96,6 +94,15 @@ char* itoa(int num, char* str)
     reverse(str, i);
  
     return str;
+}
+
+char* itoa(int num, char* str)
+{
+	return itoa_base(num,str,10);
+}
+
+char* itoa_hex(int num, char* str) {
+	return itoa_base(num,str,16);
 }
 
 unsigned char inportb (unsigned short _port) {

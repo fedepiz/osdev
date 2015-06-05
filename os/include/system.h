@@ -9,7 +9,9 @@ unsigned char inportb (unsigned short _port);
 void outportb (unsigned short _port, unsigned char _data);
 int atoi(char *str);
 void reverse(char* str, int length);
+char* itoa_base(int num, char* str, int base);
 char* itoa(int num, char* str);
+char* itoa_hex(int num, char* str);
 
 struct regs {
 	unsigned int gs, fs, es, ds;
@@ -22,6 +24,8 @@ void cls();
 void putch(char c);
 void puts(char *str);
 void putn(int n);
+void puth(int n);
+void putb(int n);
 void settextcolor(unsigned char forecolor, unsigned char backcolor);
 void init_video();
 

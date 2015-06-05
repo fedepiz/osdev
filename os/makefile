@@ -10,7 +10,7 @@ LINKFLAGS = -ffreestanding -nostdlib -O0 -Wall -Wextra -fno-exceptions -fno-rtti
 ISOFLAGS = -no-emul-boot -boot-load-size 4 -boot-info-table
 
 C_OBJS = out/kernel.o out/system.o out/scrn.o out/gdt.o  out/idt.o out/isr.o \
-         out/irq.o out/timer.o out/keyboard.o
+         out/irq.o out/timer.o out/keyboard.o out/mmap.o
 all: out out/boot.o $(C_OBJS) out/myos.bin out/bootable.iso
 out:
 	mkdir out
@@ -38,6 +38,8 @@ out/timer.o:
 	$(CC) $(CFLAGS) -o out/timer.o src/timer.cpp
 out/keyboard.o:
 	$(CC) $(CFLAGS) -o out/keyboard.o src/keyboard.cpp
+out/mmap.o:
+	$(CC) $(CFLAGS) -o out/mmap.o src/mmap.cpp
 #link togheter startup segment and kernel code 
 out/myos.bin:
 	$(CC) -T src/linker.ld -o out/myos.bin $(LINKFLAGS) out/boot.o $(C_OBJS)

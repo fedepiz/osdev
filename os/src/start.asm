@@ -38,6 +38,7 @@ mboot:
 ; before the 'jmp $'.
 extern kernel_main
 stublet:
+	push ebx
 	call kernel_main
     jmp $
 

@@ -147,6 +147,26 @@ void putn(int n) {
 	puts(itoa(n,str));
 }
 
+void puth(int n) {
+	char str[50];
+	puts("0x");
+	puts(itoa_hex(n,str));
+}
+
+void putb(int n) {
+	puts("Bx");
+	unsigned char c = (unsigned char)n;
+	putn((c >> 8) & 1);
+	putn((c >> 7) & 1);
+	putn((c >> 6) & 1);
+	putn((c >> 5) & 1);
+	putn((c >> 4) & 1);
+	putn((c >> 3) & 1);
+	putn((c >> 2) & 1);
+	putn((c >> 1) & 1);
+	putn((c >> 0) & 1);
+}
+
 /* Sets the forecolor and backcolor that we will use */
 void settextcolor(unsigned char forecolor, unsigned char backcolor)
 {
