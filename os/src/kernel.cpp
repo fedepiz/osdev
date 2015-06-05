@@ -1,5 +1,9 @@
 #include <system.h>
 #include <timer.h>
+#include <keyboard.h>
+
+void startup_checklist();
+void init_devices();
 
 void startup_checklist() {
 	//Init the vga driver, needed by all things
@@ -17,11 +21,15 @@ void startup_checklist() {
 	
 	//CUSTOM IRQ HANDLERS/DEVICE DRIVERS
 	//GO HERE
-	timer_install();
-	
+	init_devices();
 	
 	//Turn on interrupt requests
 	irq_enable();
+}
+
+void init_devices() {
+	timer_install();
+	keyboard_install();
 }
 
 #if defined(__cplusplus)
