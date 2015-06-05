@@ -27,11 +27,11 @@ mboot:
     
     ; AOUT kludge - must be physical addresses. Make a note of these:
     ; The linker script fills in the data for these ones!
-    dd mboot
-    dd code
-    dd bss
-    dd end
-    dd start
+    ;dd mboot
+    ;dd code
+    ;dd bss
+    ;dd end
+    ;dd start
 
 ; This is an endless loop here. Make a note of this: Later on, we
 ; will insert an 'extern _main', followed by 'call _main', right

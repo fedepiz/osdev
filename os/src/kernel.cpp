@@ -34,15 +34,13 @@ void init_devices() {
 	keyboard_install();
 }
 
-extern "C" unsigned long kernel_end;
-
 #if defined(__cplusplus)
 extern "C" /* Use C linkage for kernel_main. */
 #endif
 void kernel_main(multiboot_info_t* mbd, unsigned int magic) {
 	startup_checklist();
 	cls();
-	puth(kernel_end);
 	puts("Welcome to PizOS 0.0000000.....000001\n");
+	puts("Kernel limit: "); puth(kernel_limit);puts("\n");
 	print_memory_map_info(mbd);
 }
