@@ -1,3 +1,4 @@
+.code32
 # Declare constants used for creating a multiboot header.
 .set ALIGN,    1<<0             # align loaded modules on page boundaries
 .set MEMINFO,  1<<1             # provide memory map
@@ -28,30 +29,10 @@ stack_top:
 # The linker script specifies _start as the entry point to the kernel and the
 # bootloader will jump to this position once the kernel has been loaded. It
 # doesn't make sense to return from this function as the bootloader is gone.
-.section .text
+.section .text 
 .global _start
 .type _start, @function
 _start:
-	# Welcome to kernel mode! We now have sufficient code for the bootloader to
-	# load and run our operating system. It doesn't do anything interesting yet.
-	# Perhaps we would like to call printf("Hello, World\n"). You should now
-	# realize one of the profound truths about kernel mode: There is nothing
-	# there unless you provide it yourself. There is no printf function. There
-	# is no <stdio.h> header. If you want a function, you will have to code it
-	# yourself. And that is one of the best things about kernel development:
-	# you get to make the entire system yourself. You have absolute and complete
-	# power over the machine, there are no security restrictions, no safe
-	# guards, no debugging mechanisms, there is nothing but what you build.
-
-	# By now, you are perhaps tired of assembly language. You realize some
-	# things simply cannot be done in C, such as making the multiboot header in
-	# the right section and setting up the stack. However, you would like to
-	# write the operating system in a higher level language, such as C or C++.
-	# To that end, the next task is preparing the processor for execution of
-	# such code. C doesn't expect much at this point and we only need to set up
-	# a stack. Note that the processor is not fully initialized yet and stuff
-	# such as floating point instructions are not available yet.
-
 	# To set up a stack, we simply set the esp register to point to the top of
 	# our stack (as it grows downwards).
 	movl $stack_top, %esp
@@ -71,7 +52,236 @@ _start:
 	hlt
 .Lhang:
 	jmp .Lhang
+	
+.global _gdt_flush
+_gdt_flush:
+	lgdt _gp
+	mov $0x10, %ax
+	mov %ax, %ds
+	mov %ax, %es
+	mov %ax, %fs
+	mov %ax, %gs
+	mov %ax, %ss
+	jmp $0x08, $_flush2
+_flush2:
+	ret
 
+.global _idt_load
+_idt_load:
+	lidt idtp
+	ret
+.global _isr0
+.global _isr1
+.global _isr2
+.global _isr3
+.global _isr4
+.global _isr5
+.global _isr6
+.global _isr7
+.global _isr8
+.global _isr9
+.global _isr10
+.global _isr11
+.global _isr12
+.global _isr13
+.global _isr14
+.global _isr15
+.global _isr16
+.global _isr17
+.global _isr18
+.global _isr19
+.global _isr20
+.global _isr21
+.global _isr22
+.global _isr23
+.global _isr24
+.global _isr25
+.global _isr26
+.global _isr27
+.global _isr28
+.global _isr29
+.global _isr30
+.global _isr31
+
+_isr0:
+	cli
+	pushw $0
+	pushw $0
+	jmp isr_common_stub
+_isr1:
+	cli
+	pushw $0
+	pushw $1
+	jmp isr_common_stub
+_isr2:
+	cli
+	pushw $0
+	pushw $2
+	jmp isr_common_stub
+_isr3:
+	cli
+	pushw $0
+	pushw $3
+	jmp isr_common_stub
+_isr4:
+	cli
+	pushw $0
+	pushw $4
+	jmp isr_common_stub
+_isr5:
+	cli
+	pushw $0
+	pushw $5
+	jmp isr_common_stub
+_isr6:
+	cli
+	pushw $0
+	pushw $6
+	jmp isr_common_stub
+_isr7:
+	cli
+	pushw $0
+	pushw $7
+	jmp isr_common_stub
+_isr8:
+	cli
+	pushw $8
+	jmp isr_common_stub
+_isr9:
+	cli
+	pushw $0
+	pushw $9
+	jmp isr_common_stub
+_isr10:
+	cli
+	pushw $10
+	jmp isr_common_stub
+_isr11:
+	cli
+	pushw $11
+	jmp isr_common_stub
+_isr12:
+	cli
+	pushw $12
+	jmp isr_common_stub
+	cli
+_isr13:
+	cli
+	pushw $13
+	jmp isr_common_stub
+_isr14:
+	cli
+	pushw $14
+	jmp isr_common_stub
+_isr15:
+	cli
+	pushw $0
+	pushw $15
+	jmp isr_common_stub
+_isr16:
+	cli
+	pushw $0
+	pushw $16
+	jmp isr_common_stub
+_isr17:
+	cli
+	pushw $0
+	pushw $17
+	jmp isr_common_stub
+_isr18:
+	cli
+	pushw $0
+	pushw $18
+	jmp isr_common_stub
+_isr19:
+	cli
+	pushw $0
+	pushw $19
+	jmp isr_common_stub
+_isr20:
+	cli
+	pushw $0
+	pushw $20
+	jmp isr_common_stub
+_isr21:
+	cli
+	pushw $0
+	pushw $21
+	jmp isr_common_stub
+_isr22:
+	cli
+	pushw $0
+	pushw $22
+	jmp isr_common_stub
+_isr23:
+	cli
+	pushw $0
+	pushw $23
+	jmp isr_common_stub
+_isr24:
+	cli
+	pushw $0
+	pushw $24
+	jmp isr_common_stub
+_isr25:
+	cli
+	pushw $0
+	pushw $25
+	jmp isr_common_stub
+_isr26:
+	cli
+	pushw $0
+	pushw $26
+	jmp isr_common_stub
+_isr27:
+	cli
+	pushw $0
+	pushw $27
+	jmp isr_common_stub
+_isr28:
+	cli
+	pushw $0
+	pushw $28
+	jmp isr_common_stub
+_isr29:
+	cli
+	pushw $0
+	pushw $29
+	jmp isr_common_stub
+_isr30:
+	cli
+	pushw $0
+	pushw $30
+	jmp isr_common_stub
+_isr31:
+	cli
+	pushw $0
+	pushw $31
+	jmp isr_common_stub	
+	
+isr_common_stub:
+	pusha
+	push %ds
+	push %es
+	push %fs
+	push %gs
+	mov $0x10, %ax
+	mov %ax, %gs
+	mov %ax, %gs
+	mov %ax, %gs
+	mov %ax, %gs
+	mov %esp, %eax
+	push %eax
+	mov $_fault_handler, %eax
+	call *%eax
+	pop %eax
+	pop %gs
+	pop %fs
+	pop %es
+	pop %ds
+	popa
+	add %esp, 8
+	iret	
 # Set the size of the _start symbol to the current location '.' minus its start.
 # This is useful when debugging or when you implement call tracing.
 .size _start, . - _start
