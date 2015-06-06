@@ -3,6 +3,8 @@
 #include <mmap.h>
 unsigned const long frame_size = 4096;
 unsigned const long frame_map_size = 1000000;
+int _kernel_last_frame;
+
 //1 MB allocator map, with one byte per frame.
 unsigned char frame_map[frame_map_size];
 unsigned long frame_aligned(unsigned long address) {
@@ -16,9 +18,12 @@ int frame_id(unsigned long address) {
 unsigned long frame_address(int id) {
 	return (unsigned long)(id * frame_size);
 }
-
+int last_kernel_frame() {
+	return _kernel_last_frame;
+}
 void frame_allocator_init() {
 	unsigned long last_kernel_frame = frame_aligned(kernel_limit)/frame_size;
+	_kernel_last_frame = last_kernel_frame;
 	for(unsigned int i = 0;i <= last_kernel_frame;i++) {
 		frame_map[i] = 1;
 	}
