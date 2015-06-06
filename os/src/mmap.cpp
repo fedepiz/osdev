@@ -2,12 +2,15 @@
 #include <mmap.h>
 #include <multiboot.h>
 
+const unsigned long kernel_limit = (unsigned long)&_kernel_end;
 mem_block main_memory_block;
 
 void init_memory_map(multiboot_info_t* mbd) {
 	main_memory_block = find_main_ram_block(mbd);
 }
-
+unsigned long get_available_physical_memory() {
+	return main_memory_block.length - kernel_limit;
+}
 
 memory_map_t* first_mmap(multiboot_info_t* mbd) {
 	return (memory_map_t*)mbd->mmap_addr;

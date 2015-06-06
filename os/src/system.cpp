@@ -133,8 +133,6 @@ bool getBit(unsigned char b, int n) {
 	return ((b & mask) != 0);
 }
 
-const unsigned long kernel_limit = (unsigned long)&_kernel_end;
-
 
 void kernel_panic(char* str) {
 	cls();

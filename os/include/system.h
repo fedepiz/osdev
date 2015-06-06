@@ -64,10 +64,6 @@ void irq_enable();
 void irq_install_handler(int irq, irq_handler handler);
 void irq_unistall_handler(int irq);
 
-//Memory management
-extern "C" int _kernel_start; //Just symbols
-extern "C" int _kernel_end; //Just symbols
-extern const unsigned long kernel_limit;//Last address used by kernel
 
 //Kernel malloc
 unsigned int kmalloc(unsigned int sz);
