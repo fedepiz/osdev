@@ -1,6 +1,6 @@
 #ifndef __SYSTEM_H
 #define __SYSTEM_H
-void memcpy(unsigned char *dest, const unsigned char *src, int count);
+void memcpy(void *dest, const void *src, int count);
 void memset(unsigned char *dest, unsigned char val, int count);
 void memcpyw(unsigned short* dest, const unsigned short* src,int count);
 void memsetw(unsigned short *dest, unsigned short val, int count);
@@ -26,6 +26,7 @@ void puts(char *str);
 void putn(int n);
 void puth(int n);
 void putb(int n);
+void putnl();
 void settextcolor(unsigned char forecolor, unsigned char backcolor);
 void init_video();
 
@@ -53,4 +54,16 @@ void irq_enable();
 
 void irq_install_handler(int irq, irq_handler handler);
 void irq_unistall_handler(int irq);
+
+//Memory management
+extern "C" int _kernel_start; //Just symbols
+extern "C" int _kernel_end; //Just symbols
+extern const unsigned long kernel_limit;//Last address used by kernel
+
+//Kernel malloc
+unsigned int kmalloc(unsigned int sz);
+unsigned int kmalloc_a(unsigned int sz);
+unsigned int kmalloc_p(unsigned int sz, unsigned int *phys);
+unsigned int kmalloc_ap(unsigned int sz, unsigned int *phys);
+
 #endif

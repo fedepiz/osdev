@@ -9,8 +9,4 @@ struct mem_block {
 	unsigned long address;
 	unsigned long length;
 };
-
-extern "C" int _kernel_start; //Just symbols
-extern "C" int _kernel_end; //Just symbols
-extern const unsigned long kernel_limit;//Last address used by kernel
 #endif

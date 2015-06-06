@@ -167,6 +167,10 @@ void putb(int n) {
 	putn((c >> 0) & 1);
 }
 
+void putnl() {
+	puts("\n");
+}
+
 /* Sets the forecolor and backcolor that we will use */
 void settextcolor(unsigned char forecolor, unsigned char backcolor)
 {

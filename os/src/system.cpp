@@ -1,8 +1,10 @@
 #include <system.h>
 
-void memcpy(unsigned char* dest, const unsigned char* src,int count) {
+void memcpy(void* dest, const void* src,int count) {
+	unsigned char* dest2 = (unsigned char*)dest;
+	const unsigned char* src2 = (const unsigned char*)src;
 	for(int i = 0; i < count;i++) {
-		dest[i] = src[i];
+		dest2[i] = src2[i];
 	}
 }
 
@@ -113,3 +115,7 @@ unsigned char inportb (unsigned short _port) {
 void outportb (unsigned short _port, unsigned char _data){
 	 __asm__ __volatile__ ("outb %1, %0" : : "dN" (_port), "a" (_data));
 }
+
+
+const unsigned long kernel_limit = (unsigned long)&_kernel_end;
+

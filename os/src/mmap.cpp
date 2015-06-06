@@ -2,8 +2,6 @@
 #include <mmap.h>
 #include <multiboot.h>
 
-const unsigned long kernel_limit = (unsigned long)&_kernel_end;
-
 void print_memory_map_info(multiboot_info_t* mbd) {
 	puts("Printing multiboot info structure contents....\n");
 	puts("Flags: ");
