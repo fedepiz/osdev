@@ -3,7 +3,6 @@
 #include <mmap.h>
 #include <timer.h>
 #include <keyboard.h>
-#include <heap.h>
 
 void startup_checklist();
 void init_devices();
