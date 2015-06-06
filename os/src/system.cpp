@@ -116,6 +116,37 @@ void outportb (unsigned short _port, unsigned char _data){
 	 __asm__ __volatile__ ("outb %1, %0" : : "dN" (_port), "a" (_data));
 }
 
+void setBit(unsigned char* b, int n, bool state) {
+	unsigned char mask;
+	
+	if(state) {
+		mask = 0x01 << n;
+		*b = (*b | mask);
+	} else {
+		mask = ~(0x01 << n);
+		*b = (*b & mask);
+	}
+}
+
+bool getBit(unsigned char b, int n) {
+	unsigned char mask = 0x01 << n;
+	return ((b & mask) != 0);
+}
 
 const unsigned long kernel_limit = (unsigned long)&_kernel_end;
 
+
+void kernel_panic(char* str) {
+	cls();
+	puts("KERNEL PANIC\n");
+	puts(str);
+	for(;;);
+}
+
+void kernel_panic_d(char* str,char* file, int line) {
+	cls();
+	puts("KERNEL PANIC\n");
+	puts("FILE: "); puts(file);putnl();
+	puts("LINE: "); putn(line);putnl();
+	puts(str);
+}

@@ -13,6 +13,14 @@ char* itoa_base(int num, char* str, int base);
 char* itoa(int num, char* str);
 char* itoa_hex(int num, char* str);
 
+void setBit(unsigned char* b, int n, bool state);
+bool getBit(unsigned char b, int n);
+
+//KERNEL PANICS
+void kernel_panic(char* str);
+void kernel_panic_d(char* str,char* file, int line);
+#define PANIC(s) (kernel_panic_d(s,__FILE__,__LINE__))
+
 struct regs {
 	unsigned int gs, fs, es, ds;
 	unsigned int edi, esi, ebp, esp ,ebx, edx, ecx, eax;
@@ -27,6 +35,7 @@ void putn(int n);
 void puth(int n);
 void putb(int n);
 void putnl();
+void putbool(bool t);
 void settextcolor(unsigned char forecolor, unsigned char backcolor);
 void init_video();
 

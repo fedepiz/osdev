@@ -7,7 +7,7 @@
 void startup_checklist();
 void init_devices();
 
-void startup_checklist() {
+void startup_checklist(multiboot_info_t* mbd) {
 	//Init the vga driver, needed by all things
 	init_video();
 	//Install global descriptor table, needed by all following things
@@ -27,11 +27,9 @@ void startup_checklist() {
 	
 	//Turn on interrupt requests
 	irq_enable();
-}
-
-void print_memory_info(multiboot_info_t* mbd) {
-	puts("Kernel limit: "); puth(kernel_limit);puts("\n");
-	print_memory_map_info(mbd);
+	
+	//Detect memory
+	init_memory_map(mbd);
 }
 
 void init_devices() {
@@ -40,12 +38,8 @@ void init_devices() {
 }
 
 
-#if defined(__cplusplus)
-extern "C" /* Use C linkage for kernel_main. */
-#endif
-void kernel_main(multiboot_info_t* mbd, unsigned int magic) {
-	startup_checklist();
+extern "C" void kernel_main(multiboot_info_t* mbd, unsigned int magic) {
+	startup_checklist(mbd);
 	cls();
 	puts("Welcome to PizOS 0.0000000.....000001\n");
-	print_memory_info(mbd);
 }

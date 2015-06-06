@@ -156,7 +156,6 @@ void puth(int n) {
 void putb(int n) {
 	puts("Bx");
 	unsigned char c = (unsigned char)n;
-	putn((c >> 8) & 1);
 	putn((c >> 7) & 1);
 	putn((c >> 6) & 1);
 	putn((c >> 5) & 1);
@@ -165,6 +164,10 @@ void putb(int n) {
 	putn((c >> 2) & 1);
 	putn((c >> 1) & 1);
 	putn((c >> 0) & 1);
+}
+
+void putbool(bool t) {
+	t ? puts("true") : puts("false");
 }
 
 void putnl() {
