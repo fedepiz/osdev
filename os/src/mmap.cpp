@@ -26,6 +26,7 @@ mem_block mem_block_from_mmap(memory_map_t* mmap) {
 	mem_block block;
 	block.address = mmap->base_addr_low;
 	block.length = mmap->length_low;
+	block.magic = 0xFEDE;
 	return block;
 }
 
