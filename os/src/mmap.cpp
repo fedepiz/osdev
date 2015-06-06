@@ -12,6 +12,12 @@ unsigned long get_available_physical_memory() {
 	return main_memory_block.length - kernel_limit;
 }
 
+bool physical_address_exists(unsigned long addr) {
+	return addr < main_memory_block.address + main_memory_block.length;
+}
+
+
+
 memory_map_t* first_mmap(multiboot_info_t* mbd) {
 	return (memory_map_t*)mbd->mmap_addr;
 }

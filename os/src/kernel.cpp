@@ -3,6 +3,7 @@
 #include <mmap.h>
 #include <timer.h>
 #include <keyboard.h>
+#include <frame_allocator.h>
 
 void startup_checklist();
 void init_devices();
@@ -30,6 +31,8 @@ void startup_checklist(multiboot_info_t* mbd) {
 	
 	//Detect memory
 	init_memory_map(mbd);
+	//Initialize frame allocator
+	frame_allocator_init();
 }
 
 void init_devices() {

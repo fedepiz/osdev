@@ -9,6 +9,8 @@ extern const unsigned long kernel_limit;//Last address used by kernel
 void print_memory_map_info(multiboot_info_t* mbd);
 void print_memory_info(multiboot_info_t* mbd);
 
+bool physical_address_exists(unsigned long addr);
+
 struct mem_block {
 	unsigned long address;
 	unsigned long length;
