@@ -25,7 +25,7 @@ void print_descriptor_info(block_descriptor desc) {
 	puth(desc.magic);
 }
 
-void writeInDescriptors(unsigned char* ptr, unsigned long size){
+void initialize_descriptors(unsigned char* ptr, unsigned long size){
 	block_descriptor head_desc = head_block_descriptor(size);
 	block_descriptor tail_desc = tail_block_descriptor(size);
 
