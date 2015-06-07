@@ -123,7 +123,9 @@ page_table* get_table_address(page_directory* dir, int n) {
 
 void load_page_directory(unsigned long dir_address) {
 	_write_cr3(dir_address);
-	_write_cr0(_read_cr0() | 0x80000000);
+}
+void activate_paging() {
+	_write_cr0(_read_cr0() | 0x80000000);	
 }
 /*
 Allocate and enable all page tables,
@@ -161,7 +163,13 @@ void init_paging() {
 	//Create page directory
 	page_directory* dir = (page_directory*)fmalloc(sizeof(page_directory));
 	int first_free_frame = first_free_n_id(1);
+	//Create table
 	setup_empty_directory(dir);
+	//Identity map all that is allocated so far 
+	//(At the time of writing, kernel binary + page directory
+	//and tables)
 	identity_map(dir,0,first_free_frame-1);
+	//Finally, load the table and activate paging!
 	load_page_directory((unsigned long)dir);
+	activate_paging();
 }
