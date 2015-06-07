@@ -113,7 +113,14 @@ unsigned long page_table_index(unsigned long address) {
 	return (unsigned long)address >> 12 & 0x03FF;
 }
 
-unsigned long make_page(unsigned long frame,bool used,bool supervisor) {
+unsigned long page_directory_entry(page_table* table_ptr,bool used,bool supervisor) {
+	unsigned long flags = 0;
+	if(used) flags |= 1;
+	if(supervisor) flags |= 2;
+	return ((unsigned long)table_ptr) | flags;
+}
+
+unsigned long page_table_entry(unsigned long frame,bool used,bool supervisor) {
 	unsigned long flags = 0;
 	if(used) flags |= 1;
 	if(supervisor) flags |= 2;
@@ -124,7 +131,7 @@ page_table* get_table_address(page_directory* dir, int n) {
 		return (page_table*)(dir->directory_entries[n] & 0xFFFFF000);
 }
 
-void map_page_to_frame(page_directory* dir, int page, int frame, bool used) {
+void map_page_to_frame(page_directory* dir, int page, int frame, bool used,bool supervisor) {
 	//Get virtual address
 	unsigned long virtual_address = page*page_size;
 	//Extract page directory and table indexes
@@ -132,7 +139,7 @@ void map_page_to_frame(page_directory* dir, int page, int frame, bool used) {
 	unsigned long pti = page_table_index(virtual_address);
 	page_table* table = get_table_address(dir,pdi);
 	//Write in the new mapping
-	table->table_entries[pti] = make_page(frame,used,true);
+	table->table_entries[pti] = page_table_entry(frame,used,supervisor);
 }
 
 void load_page_directory(unsigned long dir_address) {
@@ -148,9 +155,9 @@ then set each page as not present.
 void setup_empty_directory(page_directory* dir) {
 	for(int i = 0; i < 1024;i++) {	
 		page_table* table = (page_table*)fmalloc(sizeof(page_table));
-		dir->directory_entries[i] = (unsigned long)table | 3;
+		dir->directory_entries[i] = page_directory_entry(table,true,true);
 		for(int j = 0; j < 1024;j++) {
-			table->table_entries[j] = make_page(0,false,true);
+			table->table_entries[j] = page_table_entry(0,false,true);
 		}
 	}
 }
@@ -159,8 +166,22 @@ Identity maps a given region of physical memory
 */
 void identity_map(page_directory* dir,int start_page,int end_page) {
 	for(int i = start_page; i <= end_page;i++) {
-		map_page_to_frame(dir,i,i,true);
+		map_page_to_frame(dir,i,i,true,true);
 	}
+}
+
+void page_fault_handler(regs* r) {
+	unsigned int err_no = r->err_code;
+	//Page not present
+	if(err_no == 0 ||
+	   err_no == 2 ||
+	   err_no == 4 ||
+	   err_no == 6) {
+		  PANIC("Page missing");
+	} else {
+		PANIC("Unhandled page fault!");
+	}
+	  
 }
 
 void init_paging() {
@@ -173,6 +194,8 @@ void init_paging() {
 	//(At the time of writing, kernel binary + page directory
 	//and tables)
 	identity_map(dir,0,first_free_frame-1);
+	//Load page fault hander
+	isr_install_handler(14,&page_fault_handler);
 	//Finally, load the table and activate paging!
 	load_page_directory((unsigned long)dir);
 	activate_paging();

@@ -147,4 +147,5 @@ void kernel_panic_d(char* str,char* file, int line) {
 	puts("FILE: "); puts(file);putnl();
 	puts("LINE: "); putn(line);putnl();
 	puts(str);
+	for(;;);
 }
