@@ -100,6 +100,7 @@ void init_frame_allocator() {
 	}
 }
 
+//PAGING
 
 unsigned long page_aligned(unsigned long address) {
 	return address - (address % page_size);
@@ -135,7 +136,7 @@ void setup_empty_directory(page_directory* dir) {
 	for(int i = 0; i < 1024;i++) {	
 		page_table* table = (page_table*)fmalloc(sizeof(page_table));
 		dir->directory_entries[i] = (unsigned long)table | 3;
-		for(int j = 0; i < 1024;j++) {
+		for(int j = 0; j < 1024;j++) {
 			table->table_entries[j] = make_page(0,false);
 		}
 	}
@@ -153,7 +154,7 @@ void identity_map(page_directory* dir,int start_page,int end_page) {
 			int page_id = i*1024 + j;
 			if(page_id >= start_page && page_id <= end_page) {
 				//if so, map it to itself
-				table->table_entries[j] = make_page(frame_address(page_id),true);
+				table->table_entries[j] = make_page(page_id,true);
 			}
 		}
 	}
@@ -172,4 +173,10 @@ void init_paging() {
 	//Finally, load the table and activate paging!
 	load_page_directory((unsigned long)dir);
 	activate_paging();
+}
+
+//MEMORY MANAGER
+void init_memory_manager() {
+	init_frame_allocator();
+	init_memory_manager();
 }

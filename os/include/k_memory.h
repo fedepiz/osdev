@@ -23,4 +23,7 @@ struct page_directory {
 	unsigned long directory_entries[1024];
 };
 void init_paging();
+//All togheter
+
+void init_memory_manager();
 #endif
