@@ -132,8 +132,7 @@ page_table* get_table_address(page_directory* dir, int n) {
 		return (page_table*)(dir->directory_entries[n] & 0xFFFFF000);
 }
 
-//USE THIS VERSION WHILE PAGING OFF
-void map_page_to_frame_phys(page_directory* dir, int page, int frame, bool used,bool supervisor) {
+void map_page_to_frame(page_directory* dir, int page, int frame, bool used,bool supervisor) {
 	//Get virtual address
 	unsigned long virtual_address = page*page_size;
 	//Extract page directory and table indexes
@@ -171,7 +170,7 @@ Identity maps a given region of physical memory
 */
 void identity_map(page_directory* dir,int start_page,int end_page) {
 	for(int i = start_page; i <= end_page;i++) {
-		map_page_to_frame_phys(dir,i,i,true,true);
+		map_page_to_frame(dir,i,i,true,true);
 	}
 }
 
@@ -187,7 +186,7 @@ void page_fault_handler(regs* r) {
 		int faulting_page = page_aligned(faulting_address)/4096;
 		int free_frame = first_free_n_id(1);
 		allocate_n_frames(free_frame,1);
-		map_page_to_frame_phys(default_dir,faulting_page,free_frame,true,true);
+		map_page_to_frame(default_dir,faulting_page,free_frame,true,true);
 	} else {
 		PANIC("Unhandled page fault!");
 	}
