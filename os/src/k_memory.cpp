@@ -7,6 +7,7 @@ This long array maps the ith entry  to the ith frame. Bit 0 is set if the
 frame has already been allocated. The other bits are, for now, unused
 */
 unsigned char frame_map[num_frames];
+page_directory* default_dir;
 //Utility functions...
 unsigned long frame_aligned_address(unsigned long addr) {
 	return addr - (addr % frame_size);
@@ -131,7 +132,8 @@ page_table* get_table_address(page_directory* dir, int n) {
 		return (page_table*)(dir->directory_entries[n] & 0xFFFFF000);
 }
 
-void map_page_to_frame(page_directory* dir, int page, int frame, bool used,bool supervisor) {
+//USE THIS VERSION WHILE PAGING OFF
+void map_page_to_frame_phys(page_directory* dir, int page, int frame, bool used,bool supervisor) {
 	//Get virtual address
 	unsigned long virtual_address = page*page_size;
 	//Extract page directory and table indexes
@@ -148,6 +150,8 @@ void load_page_directory(unsigned long dir_address) {
 void activate_paging() {
 	_write_cr0(_read_cr0() | 0x80000000);	
 }
+
+
 /*
 Allocate and enable all page tables,
 then set each page as not present.
@@ -161,12 +165,13 @@ void setup_empty_directory(page_directory* dir) {
 		}
 	}
 }
+
 /*
 Identity maps a given region of physical memory
 */
 void identity_map(page_directory* dir,int start_page,int end_page) {
 	for(int i = start_page; i <= end_page;i++) {
-		map_page_to_frame(dir,i,i,true,true);
+		map_page_to_frame_phys(dir,i,i,true,true);
 	}
 }
 
@@ -177,7 +182,12 @@ void page_fault_handler(regs* r) {
 	   err_no == 2 ||
 	   err_no == 4 ||
 	   err_no == 6) {
-		  PANIC("Page missing");
+		   
+		unsigned long faulting_address = _read_cr2();
+		int faulting_page = page_aligned(faulting_address)/4096;
+		int free_frame = first_free_n_id(1);
+		allocate_n_frames(free_frame,1);
+		map_page_to_frame_phys(default_dir,faulting_page,free_frame,true,true);
 	} else {
 		PANIC("Unhandled page fault!");
 	}
@@ -187,13 +197,13 @@ void page_fault_handler(regs* r) {
 void init_paging() {
 	//Create page directory
 	page_directory* dir = (page_directory*)fmalloc(sizeof(page_directory));
-	int first_free_frame = first_free_n_id(1);
+	default_dir = dir;
 	//Create table
 	setup_empty_directory(dir);
 	//Identity map all that is allocated so far 
 	//(At the time of writing, kernel binary + page directory
 	//and tables)
-	identity_map(dir,0,first_free_frame-1);
+	identity_map(dir,0,first_free_n_id(1)-1);
 	//Load page fault hander
 	isr_install_handler(14,&page_fault_handler);
 	//Finally, load the table and activate paging!
