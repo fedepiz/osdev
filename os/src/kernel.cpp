@@ -3,8 +3,7 @@
 #include <mmap.h>
 #include <timer.h>
 #include <keyboard.h>
-#include <frame_allocator.h>
-#include <paging.h>
+#include <k_memory.h>
 
 void startup_checklist();
 void init_devices();
@@ -32,10 +31,7 @@ void startup_checklist(multiboot_info_t* mbd) {
 	
 	//Detect memory
 	init_memory_map(mbd);
-	//Initialize frame allocator
-	frame_alloc::frame_allocator_init();
-	//And then paging
-	paging::init_paging();
+	
 }
 
 void init_devices() {
@@ -43,10 +39,19 @@ void init_devices() {
 	keyboard_install();
 }
 
-
+void frame_allocator_tests() {
+	putn(get_last_kernel_frame());putnl();
+	putn(first_free_n_id(1));putnl();
+	page_table* p = (page_table*)fmalloc(frame_size);
+	putn(first_free_n_id(1));putnl();
+	page_table* q = (page_table*)fmalloc(frame_size+1);
+	putn(first_free_n_id(1));putnl();
+}
 
 extern "C" void kernel_main(multiboot_info_t* mbd, unsigned int magic) {
 	startup_checklist(mbd);
 	cls();
 	puts("Welcome to PizOS 0.0000000.....000001\n");
+	init_frame_allocator();
+	init_paging();
 }

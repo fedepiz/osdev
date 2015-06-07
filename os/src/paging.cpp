@@ -24,6 +24,7 @@ namespace paging {
 	page_table* get_table_address(page_directory* dir, int n) {
 		return (page_table*)(dir->tables[n] & 0xFFFFF000);
 	}
+	
 	void page_fault_handler(regs* reg);
 	page_directory* main_dir;
 	void init_paging() {
