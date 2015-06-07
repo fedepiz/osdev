@@ -40,24 +40,22 @@ void init_devices() {
 	keyboard_install();
 }
 
-void frame_allocator_tests() {
-	putn(get_last_kernel_frame());putnl();
-	putn(first_free_n_id(1));putnl();
-    fmalloc(frame_size);
-	putn(first_free_n_id(1));putnl();
-	fmalloc(frame_size+1);
-	putn(first_free_n_id(1));putnl();
+void init_memory_management() {
+	//Initialize frame allocation
+	init_frame_manager();
+	//Allocate frames for page directory(1) and tables(1024)
+	unsigned char* paging_memory = (unsigned char*)fmalloc(4096*1025);
+	//Initialize tables at given address, and turn paging on. The
+	//whole memory space should be identity paged.
+	init_paging(paging_memory);
 }
 
 extern "C" void kernel_main(multiboot_info_t* mbd, unsigned int magic) {
 	startup_checklist(mbd);
 	cls();
 	puts("Welcome to PizOS 0.0000000.....000001\n");
-	init_frame_allocator();
-	unsigned char* paging_memory = (unsigned char*)fmalloc(4096*1026);
-	init_paging(paging_memory);
-	int free_frame = first_free_n_id(1);
-	int* x = (int*)(free_frame*4096);
+	init_memory_management();
+	int* x = (int*)(0xFFFFFFF0);
 	*x = 5;
 	putn(*x);
 }
