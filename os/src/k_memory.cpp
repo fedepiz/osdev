@@ -175,13 +175,15 @@ void identity_map(page_directory* dir,int start_page,int end_page) {
 }
 
 void page_fault_handler(regs* r) {
+	PANIC("PAGE FAULT");
+	/*
 	unsigned int err_no = r->err_code;
 	//Page not present
 	if(err_no == 0 ||
 	   err_no == 2 ||
 	   err_no == 4 ||
 	   err_no == 6) {
-		   
+		
 		unsigned long faulting_address = _read_cr2();
 		int faulting_page = page_aligned(faulting_address)/4096;
 		int free_frame = first_free_n_id(1);
@@ -190,7 +192,7 @@ void page_fault_handler(regs* r) {
 	} else {
 		PANIC("Unhandled page fault!");
 	}
-	  
+	*/ 
 }
 
 void init_paging() {
@@ -199,10 +201,8 @@ void init_paging() {
 	default_dir = dir;
 	//Create table
 	setup_empty_directory(dir);
-	//Identity map all that is allocated so far 
-	//(At the time of writing, kernel binary + page directory
-	//and tables)
-	identity_map(dir,0,first_free_n_id(1)-1);
+	//Identity map the whole page 
+	identity_map(dir,0,1024*1024);
 	//Load page fault hander
 	isr_install_handler(14,&page_fault_handler);
 	//Finally, load the table and activate paging!
