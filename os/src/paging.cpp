@@ -2,7 +2,6 @@
 #include <system.h>
 #include <mmap.h>
 #include <frame_allocator.h>
-
 unsigned long page_size = 4096;
 unsigned long page_aligned(unsigned long address) {
 	return address - (address % page_size);
@@ -26,16 +25,21 @@ page_table* get_table_address(page_directory* dir, int n) {
 }
 
 void init_paging() {
-   page_directory* dir = (page_directory*) allocate_first_free_frame();
- 
+   //Create page directory
+   page_directory* dir = (page_directory*)frame_alloc::allocate_first_free_frame();
+   //Fill directory entries (page table pointers)
    for(int i = 0;i < 1024;i++) {
-	   dir->tables[i] = (unsigned long)allocate_first_free_frame();
+	   dir->tables[i] = (unsigned long)frame_alloc::allocate_first_free_frame();
 	   dir->tables[i] = dir->tables[i] | 3;
    }
-   
-   page_table* first = get_table_address(dir,0);
+   //Fill pages, up to limit set valid
+   int limit = (int)(frame_alloc::first_free_frame());
    for(int i = 0; i < 1024;i++) {
-	   first->pages[i] = make_page(i,true);
+	   for(int j = 0; j < 1024;j++) {
+		   int page_n = 1024*i + j;
+		   page_table* table = get_table_address(dir,i);
+		   table->pages[j] = make_page(page_n,page_n < limit);
+	   }
    }
    
    _write_cr3((unsigned long)dir);
