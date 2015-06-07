@@ -157,7 +157,8 @@ extern "C" void _fault_handler(struct regs *r)
 			h(r);
 		} else {
 			puts(exception_messages[r->int_no]);
-			puts("Exception. System Halted!\n");
+			putnl();putn(r->int_no);
+			puts("\nException. System Halted!\n");
 			for (;;);
 		}
     }

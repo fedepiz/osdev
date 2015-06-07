@@ -5,7 +5,6 @@
 #include <keyboard.h>
 #include <frame_allocator.h>
 #include <paging.h>
-using namespace frame_alloc;
 
 void startup_checklist();
 void init_devices();
@@ -34,7 +33,9 @@ void startup_checklist(multiboot_info_t* mbd) {
 	//Detect memory
 	init_memory_map(mbd);
 	//Initialize frame allocator
-	frame_allocator_init();
+	frame_alloc::frame_allocator_init();
+	//And then paging
+	paging::init_paging();
 }
 
 void init_devices() {
@@ -48,8 +49,4 @@ extern "C" void kernel_main(multiboot_info_t* mbd, unsigned int magic) {
 	startup_checklist(mbd);
 	cls();
 	puts("Welcome to PizOS 0.0000000.....000001\n");
-	init_paging();
-	putn(first_free_frame());putnl();
-	unsigned char* ptr = allocate_first_free_frame();
-	ptr[0] = 5;
 }

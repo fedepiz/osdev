@@ -64,6 +64,14 @@ void irq_enable();
 void irq_install_handler(int irq, irq_handler handler);
 void irq_unistall_handler(int irq);
 
+//Control register reading
+extern "C" void _write_cr0(unsigned long x);
+extern "C" unsigned long _read_cr0();
+extern "C" void _write_cr2(unsigned long ptr);
+extern "C" unsigned long _read_cr2();
+extern "C" void _write_cr3(unsigned long ptr);
+extern "C" unsigned long _read_cr3();
+
 
 //Kernel malloc
 unsigned int kmalloc(unsigned int sz);
