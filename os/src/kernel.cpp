@@ -3,7 +3,8 @@
 #include <mmap.h>
 #include <timer.h>
 #include <keyboard.h>
-#include <k_memory.h>
+#include <frame_manager.h>
+#include <paging.h>
 
 void startup_checklist();
 void init_devices();
@@ -52,7 +53,9 @@ extern "C" void kernel_main(multiboot_info_t* mbd, unsigned int magic) {
 	startup_checklist(mbd);
 	cls();
 	puts("Welcome to PizOS 0.0000000.....000001\n");
-	init_memory_manager();
+	init_frame_allocator();
+	unsigned char* paging_memory = (unsigned char*)fmalloc(4096*1026);
+	init_paging(paging_memory);
 	int free_frame = first_free_n_id(1);
 	int* x = (int*)(free_frame*4096);
 	*x = 5;
