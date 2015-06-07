@@ -113,13 +113,26 @@ unsigned long page_table_index(unsigned long address) {
 	return (unsigned long)address >> 12 & 0x03FF;
 }
 
-unsigned long make_page(unsigned long frame,bool used) {
-	if(used) return ((frame*4096) | 3);
-	else return 0 | 2;
+unsigned long make_page(unsigned long frame,bool used,bool supervisor) {
+	unsigned long flags = 0;
+	if(used) flags |= 1;
+	if(supervisor) flags |= 2;
+	return (frame*4096) | flags;
 }
 
 page_table* get_table_address(page_directory* dir, int n) {
 		return (page_table*)(dir->directory_entries[n] & 0xFFFFF000);
+}
+
+void map_page_to_frame(page_directory* dir, int page, int frame, bool used) {
+	//Get virtual address
+	unsigned long virtual_address = page*page_size;
+	//Extract page directory and table indexes
+	unsigned long pdi = page_directory_index(virtual_address);
+	unsigned long pti = page_table_index(virtual_address);
+	page_table* table = get_table_address(dir,pdi);
+	//Write in the new mapping
+	table->table_entries[pti] = make_page(frame,used,true);
 }
 
 void load_page_directory(unsigned long dir_address) {
@@ -137,7 +150,7 @@ void setup_empty_directory(page_directory* dir) {
 		page_table* table = (page_table*)fmalloc(sizeof(page_table));
 		dir->directory_entries[i] = (unsigned long)table | 3;
 		for(int j = 0; j < 1024;j++) {
-			table->table_entries[j] = make_page(0,false);
+			table->table_entries[j] = make_page(0,false,true);
 		}
 	}
 }
@@ -145,18 +158,8 @@ void setup_empty_directory(page_directory* dir) {
 Identity maps a given region of physical memory
 */
 void identity_map(page_directory* dir,int start_page,int end_page) {
-	//For each table
-	for(int i = 0; i < 1024;i++) {
-		page_table* table = get_table_address(dir,i);
-		//For each page
-		for(int j = 0; j < 1024;j++) {
-			//Check if page is in region
-			int page_id = i*1024 + j;
-			if(page_id >= start_page && page_id <= end_page) {
-				//if so, map it to itself
-				table->table_entries[j] = make_page(page_id,true);
-			}
-		}
+	for(int i = start_page; i <= end_page;i++) {
+		map_page_to_frame(dir,i,i,true);
 	}
 }
 
@@ -178,5 +181,5 @@ void init_paging() {
 //MEMORY MANAGER
 void init_memory_manager() {
 	init_frame_allocator();
-	init_memory_manager();
+	init_paging();
 }
