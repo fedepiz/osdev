@@ -72,11 +72,4 @@ extern "C" unsigned long _read_cr2();
 extern "C" void _write_cr3(unsigned long ptr);
 extern "C" unsigned long _read_cr3();
 
-
-//Kernel malloc
-unsigned int kmalloc(unsigned int sz);
-unsigned int kmalloc_a(unsigned int sz);
-unsigned int kmalloc_p(unsigned int sz, unsigned int *phys);
-unsigned int kmalloc_ap(unsigned int sz, unsigned int *phys);
-
 #endif
