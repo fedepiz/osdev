@@ -116,6 +116,12 @@ void outportb (unsigned short _port, unsigned char _data){
 	 __asm__ __volatile__ ("outb %1, %0" : : "dN" (_port), "a" (_data));
 }
 
+unsigned long abs_diff(unsigned long x, unsigned long y) {
+	if (x > y)
+		return x - y;
+	else return y - x;
+}
+
 void setBit(unsigned char* b, int n, bool state) {
 	unsigned char mask;
 	

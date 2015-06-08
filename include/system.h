@@ -13,6 +13,8 @@ char* itoa_base(int num, char* str, int base);
 char* itoa(int num, char* str);
 char* itoa_hex(int num, char* str);
 
+unsigned long abs_diff(unsigned long x, unsigned long y);
+
 void setBit(unsigned char* b, int n, bool state);
 bool getBit(unsigned char b, int n);
 

@@ -27,7 +27,8 @@ public:
 	
 	//Will have to be hidden after testing
 	void insert_block(unsigned char* ptr,unsigned long total_size);
-	bool split_block(unsigned char* ptr, unsigned long split_size);
+	bool split_blocks(unsigned char* ptr, unsigned long split_size);
+	void merge_blocks(unsigned char* ptr1, unsigned char* ptr2);
 	unsigned char* first_free_block(unsigned long min_size);
 
 };

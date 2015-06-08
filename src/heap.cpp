@@ -19,7 +19,7 @@ unsigned long payload_to_total(unsigned long size) {
 
 }
 
-bool Heap::split_block(unsigned char* ptr, unsigned long split_size) {
+bool Heap::split_blocks(unsigned char* ptr, unsigned long split_size) {
 	heap_block_tag* header = (heap_block_tag*)ptr;
 	unsigned long original_total_size =  payload_to_total(header->size);
 	unsigned long remaining_size = original_total_size - split_size;	
@@ -30,6 +30,14 @@ bool Heap::split_block(unsigned char* ptr, unsigned long split_size) {
 	insert_block(ptr,split_size);
 	insert_block(second_target, remaining_size);
 	return true;
+}
+
+void Heap::merge_blocks(unsigned char* ptr1, unsigned char* ptr2) {
+	heap_block_tag* second_tag = (heap_block_tag*)ptr2;
+	unsigned long total_second_size = payload_to_total(second_tag->size);
+	unsigned long in_between_pointers = abs_diff((unsigned long)ptr1,(unsigned long)ptr2);
+	unsigned long total_size = in_between_pointers + total_second_size;
+	insert_block(ptr1,total_size);
 }
 
 bool Heap::in_bounds(unsigned char* addr) {

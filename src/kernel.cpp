@@ -73,7 +73,7 @@ extern "C" void kernel_main(multiboot_info_t* mbd, unsigned int magic) {
 	print_header((heap_block_tag*)memory);
 	puts("\n\n");
 	
-	putbool(heap.split_block(memory,4096));
+	putbool(heap.split_blocks(memory,4096));
 	putnl();
 	
 	print_header((heap_block_tag*)memory);
