@@ -6,6 +6,9 @@ struct keyboard_status {
 };
 
 void keyboard_install();
+
+void set_keyboard_echo(bool status);
+
 bool get_key_status(int scancode);
 keyboard_status get_keyboard_status();
 

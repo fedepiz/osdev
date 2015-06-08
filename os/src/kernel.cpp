@@ -38,6 +38,7 @@ void startup_checklist(multiboot_info_t* mbd) {
 void init_devices() {
 	timer_install();
 	keyboard_install();
+	set_keyboard_echo(true);
 }
 
 void init_memory_management() {

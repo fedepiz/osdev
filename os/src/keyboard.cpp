@@ -1,7 +1,10 @@
 #include <system.h>
 #include <keyboard.h>
 unsigned char kbstatus[128];
-
+bool _keyboard_echo;
+void set_keyboard_echo(bool status) {
+	_keyboard_echo = status;
+}
 /* Handles the keyboard interrupt */
 void keyboard_handler(struct regs *r)
 {
@@ -35,7 +38,9 @@ void keyboard_handler(struct regs *r)
         *  to the above layout to correspond to 'shift' being
         *  held. If shift is held using the larger lookup table,
         *  you would add 128 to the scancode when you look for it */
-		putch(kbdus[scancode]);
+		if(_keyboard_echo) {
+			putch(kbdus[scancode]);
+		}
 		//Updates interal keyboard status
 		kbstatus[scancode] = 1;
 	}
@@ -52,6 +57,7 @@ keyboard_status get_keyboard_status() {
 }
 
 void keyboard_install() {
+	_keyboard_echo = false;
 	memset((unsigned char*)&kbstatus,0,128);
 	irq_install_handler(1, &keyboard_handler);
 }
