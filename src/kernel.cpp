@@ -52,12 +52,6 @@ void init_memory_management() {
 	init_paging(holder);
 }
 
-void print_header(heap_block_tag* header) {
-	unsigned long addr = (unsigned long)header;
-	void* arr[] = {&addr, &header->size, &header->magic };
-	putf("Structure of header at %h: size = %d, magic = %h\n",arr);
-}
-
 extern "C" void kernel_main(multiboot_info_t* mbd, unsigned int magic) {
 	startup_checklist(mbd);
 	cls();
@@ -69,17 +63,11 @@ extern "C" void kernel_main(multiboot_info_t* mbd, unsigned int magic) {
 	unsigned char* memory = (unsigned char*)fmalloc(memory_size);
 	
 	Heap heap(memory,memory_size);
-	heap.insert_block(memory,memory_size);
-	print_header((heap_block_tag*)memory);
-	puts("\n\n");
+	int* x = (int*)heap.allocate(sizeof(int));
+	int* y = (int*)heap.allocate(sizeof(int));
+	heap.printHeap();
 	
-	putbool(heap.split_blocks(memory,4096));
-	putnl();
-	
-	print_header((heap_block_tag*)memory);
-	print_header((heap_block_tag*)(memory + 4096));
-	
-	print_header((heap_block_tag*)heap.first_free_block(4096));
-	
+	putf("Address of x: %h\n",&x);
+	putf("Address of y: %h\n",&y);
 	putnl();puts("DONE");
 }

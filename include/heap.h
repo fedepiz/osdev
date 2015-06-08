@@ -12,7 +12,7 @@ struct heap_block_footer{
 };
 
 
-
+void print_heap_block_tag(heap_block_tag* header);
 class Heap {
 private:
 	unsigned char* memory;
@@ -29,7 +29,11 @@ public:
 	void insert_block(unsigned char* ptr,unsigned long total_size);
 	bool split_blocks(unsigned char* ptr, unsigned long split_size);
 	void merge_blocks(unsigned char* ptr1, unsigned char* ptr2);
-	unsigned char* first_free_block(unsigned long min_size);
-
+	//Permanent stuff
+	unsigned char* allocate(unsigned long size);
+	void free(unsigned char* ptr);
+	unsigned char* first_free_block(unsigned long min_payload_size);
+	//Debug stuff
+	void printHeap();
 };
 #endif

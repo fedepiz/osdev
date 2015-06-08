@@ -64,11 +64,11 @@ unsigned char* Heap::previous_block(unsigned char* ptr) {
 	}
 }
 
-unsigned char* Heap::first_free_block(unsigned long min_size) {
+unsigned char* Heap::first_free_block(unsigned long min_payload_size) {
 	unsigned char* ptr = this->memory;
 	while(this->in_bounds(ptr)) {
 		heap_block_tag* tag = (heap_block_tag*)ptr;
-		if(tag->size >= min_size && !tag->taken) {
+		if(tag->size >= min_payload_size && !tag->taken) {
 			return ptr;
 		} else {
 			ptr = next_block(ptr);
@@ -77,9 +77,24 @@ unsigned char* Heap::first_free_block(unsigned long min_size) {
 	return 0;
 }
 
+unsigned char* Heap::allocate(unsigned long payload_size) {
+	unsigned char* ptr = this->first_free_block(payload_size);
+	heap_block_tag* tag = (heap_block_tag*)ptr;
+	//If bigger, try to split
+	if(tag->size > payload_size) {
+		this->split_blocks(ptr,payload_to_total(payload_size));
+	}
+	tag->taken = true;
+	return ptr + sizeof(heap_block_tag);
+}
+void Heap::free(unsigned char* ptr) {
+	
+}
+
 Heap::Heap(unsigned char* memory,unsigned long memory_size) {
 	this->memory = memory;
 	this->memory_size = memory_size;
+	this->insert_block(memory,memory_size);
 }
 
 unsigned char* Heap::getMemoryPtr() {
@@ -88,4 +103,20 @@ unsigned char* Heap::getMemoryPtr() {
 
 unsigned long Heap::getMemorySize() {
 	return this->memory_size;
+}
+
+//Debug stuff
+void print_heap_block_tag(heap_block_tag* header) {
+	unsigned long addr = (unsigned long)header;
+	void* arr[] = {&addr, &header->size, &header->magic };
+	putf("Structure of header at %h: size = %d, magic = %h\n",arr);
+}
+
+void Heap::printHeap() {
+	unsigned char* ptr = this->memory;
+	while(in_bounds(ptr)) {
+		heap_block_tag* tag = (heap_block_tag*)ptr;
+		print_heap_block_tag(tag);
+		ptr = next_block(ptr);
+	}
 }
