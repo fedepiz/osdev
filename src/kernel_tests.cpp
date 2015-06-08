@@ -15,7 +15,7 @@ void heap_test_x_y_x(){
 	
 	Heap heap(memory,memory_size);
 	int* x = (int*)heap.allocate(sizeof(int));
-	int* y = (int*)heap.allocate(sizeof(int));
+	/*int* y = (int*)*/ heap.allocate(sizeof(int));
 	heap.printHeap();
 	heap.free(x);
 	puts("---------------------------\n");
@@ -28,7 +28,7 @@ void heap_test_x_y_y() {
 	unsigned char* memory = (unsigned char*)fmalloc(memory_size);
 	
 	Heap heap(memory,memory_size);
-	int* x = (int*)heap.allocate(sizeof(int));
+	/*int* x = (int*)*/heap.allocate(sizeof(int));
 	int* y = (int*)heap.allocate(sizeof(int));
 	heap.printHeap();
 	heap.free(y);
