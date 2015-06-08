@@ -1,7 +1,11 @@
 #include <system.h>
 #include <paging.h>
 
-page_directory* default_dir;
+page_book* _main_page_book;
+
+page_book* main_page_book() {
+	return _main_page_book;
+}
 
 unsigned long page_aligned(unsigned long address) {
 	return address - (address % page_size);
@@ -43,6 +47,10 @@ void map_page_to_frame(page_directory* dir, int page, int frame, bool used,bool 
 	table->table_entries[pti] = page_table_entry(frame,used,supervisor);
 }
 
+void map_page_to_frame(int page,int frame) {
+	map_page_to_frame(&_main_page_book->directory,page,frame,true,true);
+}
+
 void load_page_directory(unsigned long dir_address) {
 	_write_cr3(dir_address);
 }
@@ -74,42 +82,54 @@ void identity_map(page_directory* dir,int start_page,int end_page) {
 	}
 }
 
+void map_holder_to_end(page_book* holder) {
+	int holder_size = ((sizeof(page_book))/4096);
+	int start_page = num_pages - holder_size;
+	int start_frame = (int)holder/4096;
+	for(int i = 0; i < holder_size;i++) {
+		map_page_to_frame(start_page + i, start_frame + i); 
+	}
+}
+
+page_book* loaded_page_book(){
+	int holder_size = ((sizeof(page_book))/4096);
+	int start_page = num_pages - holder_size;
+	return (page_book*)(start_page*4096);
+}
+
 void page_fault_handler(regs* r) {
 	PANIC("PAGE FAULT");
-	/*
-	unsigned int err_no = r->err_code;
-	//Page not present
-	if(err_no == 0 ||
-	   err_no == 2 ||
-	   err_no == 4 ||
-	   err_no == 6) {
-		
-		unsigned long faulting_address = _read_cr2();
-		int faulting_page = page_aligned(faulting_address)/4096;
-		int free_frame = first_free_n_id(1);
-		allocate_n_frames(free_frame,1);
-		map_page_to_frame(default_dir,faulting_page,free_frame,true,true);
-	} else {
-		PANIC("Unhandled page fault!");
-	}
-	*/ 
 }
 
 void init_paging(page_book* holder) {
+	//The holder must be page aligned. Otherwise, the system
+	//would triple fault when paging is switched on
 	if(page_aligned((unsigned long)holder) != (unsigned long)holder) {
 		PANIC("FAILED PAGING INITIALIZATION\n"
-		      "The physical address given to page initialisation\n"
-			  "is not aligned on a page boundary");
+		      "The physical address of the page book\n"
+ 			  "given to page initialisation\n is not a"
+			  "ligned on a page boundary");
 	}
-	//Create page directory
+	//Dir points to the directory. Used by
+	//some functions below
 	page_directory* dir = &holder->directory;
-	default_dir = dir;
-	//Create table
+	//Record address of holder in _main_page_book.
+	_main_page_book = holder;
+	//Create directory, filled with tables whose pages
+	//are all invalid. Holder is the page_book structure
+	//which will actually hold the value.
 	setup_empty_directory(holder);
-	//Identity map the whole page 
-	int total_num_pages = 1024*1024;
-	identity_map(dir,0,total_num_pages);
-	//Load page fault hander
+	//Identity map the whole address space. This makes
+	//sense as so far the kernel is the only process,
+	//and this obviosuly avoids triple faults due to
+	//addresses not making sense anymore
+	identity_map(dir,0,num_pages);
+	//Map last 1025 pages to physical address of holder,
+	//so that it may be retrieved using loaded_page_book()
+	map_holder_to_end(holder);
+	//Load page fault handler. Right now, it's just
+	//an empty stub that causes the system to halt, since
+	//the whole space is identity mapped
 	isr_install_handler(14,&page_fault_handler);
 	//Finally, load the table and activate paging!
 	load_page_directory((unsigned long)dir);

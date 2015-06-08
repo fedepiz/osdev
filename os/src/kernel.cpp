@@ -43,7 +43,7 @@ void init_devices() {
 void init_memory_management() {
 	//Initialize frame allocation
 	init_frame_manager();
-	//Allocate frames for page directory(1) and tables(1024)
+	//Allocate page book to actually hold pages
 	page_book* holder = (page_book*)fmalloc(sizeof(page_book));
 	//Initialize tables at given address, and turn paging on. The
 	//whole memory space should be identity paged.
@@ -55,7 +55,6 @@ extern "C" void kernel_main(multiboot_info_t* mbd, unsigned int magic) {
 	cls();
 	puts("Welcome to PizOS 0.0000000.....000001\n");
 	init_memory_management();
-	int* x = (int*)(0xFFFFFFF0);
-	*x = 5;
-	putn(*x);
+	
+	putnl();puts("DONE");
 }
