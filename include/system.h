@@ -36,6 +36,8 @@ void puth(int n);
 void putb(int n);
 void putnl();
 void putbool(bool t);
+void putf(char* format,void** values);
+void putf(char* format,void* one);
 void settextcolor(unsigned char forecolor, unsigned char backcolor);
 void init_video();
 

@@ -174,6 +174,46 @@ void putnl() {
 	puts("\n");
 }
 
+void putvar(char c,void* value) {
+	if(c == 'd') {
+		int* ptr = (int*)value;
+		putn(*ptr);
+	} else if (c == 'u'){
+		unsigned long *ptr = (unsigned long*)value;
+		putn(*ptr);
+	} else if (c == 'h') {
+		unsigned long *ptr = (unsigned long*)value;
+		puth(*ptr);
+	} else if (c == 's'){
+		char* ptr = (char*)value;
+		puts(ptr);
+	}
+}
+
+void putf(char* format,void** values) {
+	int index = 0;
+	int val_index = 0;
+	while(format[index] != 0) {
+		if(format[index] == '%') {
+			format++;
+			if(format[index] == '%') {
+				putch('%');
+			} else {
+				putvar(format[index],values[val_index]);
+				val_index++;
+			}
+		} else {
+			putch(format[index]);
+		}
+		index++;
+	}
+}
+
+void putf(char* format,void* one) {
+	void* arr [] = { one };
+	putf(format,arr);
+}
+
 /* Sets the forecolor and backcolor that we will use */
 void settextcolor(unsigned char forecolor, unsigned char backcolor)
 {

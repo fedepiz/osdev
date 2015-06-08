@@ -56,6 +56,7 @@ extern "C" void kernel_main(multiboot_info_t* mbd, unsigned int magic) {
 	cls();
 	puts("Welcome to PizOS 0.0000000.....000001\n");
 	init_memory_management();
-	
+	int x = 5;
+	putf("Lets test putf, %d\n", &x);
 	putnl();puts("DONE");
 }
