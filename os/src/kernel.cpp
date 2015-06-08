@@ -44,10 +44,10 @@ void init_memory_management() {
 	//Initialize frame allocation
 	init_frame_manager();
 	//Allocate frames for page directory(1) and tables(1024)
-	unsigned char* paging_memory = (unsigned char*)fmalloc(4096*1025);
+	page_book* holder = (page_book*)fmalloc(sizeof(page_book));
 	//Initialize tables at given address, and turn paging on. The
 	//whole memory space should be identity paged.
-	init_paging(paging_memory);
+	init_paging(holder);
 }
 
 extern "C" void kernel_main(multiboot_info_t* mbd, unsigned int magic) {

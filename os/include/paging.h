@@ -9,9 +9,15 @@ struct page_table {
 struct page_directory {
 	unsigned long directory_entries[1024];
 };
+
+struct page_book {
+	page_directory directory;
+	page_table tables[1024];
+};
+
 //Initializes page structure at given memory address.
 //After initialization, the whole memory space will be
 //identity paged.
 //It must be aligned!
-void init_paging(unsigned char* memory);
+void init_paging(page_book* holder);
 #endif

@@ -55,11 +55,10 @@ void activate_paging() {
 Allocate and enable all page tables,
 then set each page as not present.
 */
-void setup_empty_directory(page_directory* dir,unsigned char* memory) {
+void setup_empty_directory(page_book* holder) {
 	for(int i = 0; i < 1024;i++) {	
-		page_table* table = (page_table*)(memory);
-		memory += 4096;
-		dir->directory_entries[i] = page_directory_entry(table,true,true);
+		page_table* table = &holder->tables[i];
+		holder->directory.directory_entries[i] = page_directory_entry(table,true,true);
 		for(int j = 0; j < 1024;j++) {
 			table->table_entries[j] = page_table_entry(0,false,true);
 		}
@@ -96,17 +95,17 @@ void page_fault_handler(regs* r) {
 	*/ 
 }
 
-void init_paging(unsigned char* memory) {
-	if(page_aligned((unsigned long)memory) != (unsigned long)memory) {
+void init_paging(page_book* holder) {
+	if(page_aligned((unsigned long)holder) != (unsigned long)holder) {
 		PANIC("FAILED PAGING INITIALIZATION\n"
 		      "The physical address given to page initialisation\n"
 			  "is not aligned on a page boundary");
 	}
 	//Create page directory
-	page_directory* dir = (page_directory*)memory;
+	page_directory* dir = &holder->directory;
 	default_dir = dir;
 	//Create table
-	setup_empty_directory(dir,memory + 4096);
+	setup_empty_directory(holder);
 	//Identity map the whole page 
 	int total_num_pages = 1024*1024;
 	identity_map(dir,0,total_num_pages);
