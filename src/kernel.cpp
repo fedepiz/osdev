@@ -5,6 +5,7 @@
 #include <keyboard.h>
 #include <frame_manager.h>
 #include <paging.h>
+#include <heap.h>
 
 void startup_checklist();
 void init_devices();
@@ -56,6 +57,6 @@ extern "C" void kernel_main(multiboot_info_t* mbd, unsigned int magic) {
 	cls();
 	puts("Welcome to PizOS 0.0000000.....000001\n");
 	init_memory_management();
-	
+	putn(sizeof(heap_block_tag));
 	putnl();puts("DONE");
 }
