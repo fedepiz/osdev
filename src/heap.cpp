@@ -46,6 +46,16 @@ unsigned char* Heap::next_block(unsigned char* ptr) {
 	}
 }
 
+unsigned char* Heap::previous_block(unsigned char* ptr) {
+	heap_block_footer* footer = (heap_block_footer*)(ptr - sizeof(heap_block_footer));
+	unsigned char* prev = (unsigned char*)(footer->header);
+	if(in_bounds(prev)) {
+		return prev;
+	} else {
+		return 0;
+	}
+}
+
 unsigned char* Heap::first_free_block(unsigned long min_size) {
 	unsigned char* ptr = this->memory;
 	while(this->in_bounds(ptr)) {
