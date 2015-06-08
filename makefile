@@ -11,7 +11,7 @@ ISOFLAGS = -no-emul-boot -boot-load-size 4 -boot-info-table
 
 C_OBJS = out/kernel.o out/system.o out/scrn.o out/gdt.o  out/idt.o out/isr.o \
          out/irq.o out/timer.o out/keyboard.o out/mmap.o \
-		 out/frame_manager.o out/paging.o out/heap.o
+		 out/frame_manager.o out/paging.o out/heap.o out/kernel_tests.o
 all: out out/boot.o $(C_OBJS) out/myos.bin out/bootable.iso
 out:
 	mkdir out
@@ -47,6 +47,8 @@ out/paging.o:
 	$(CC) $(CFLAGS) -o out/paging.o src/paging.cpp
 out/heap.o:
 	$(CC) $(CFLAGS) -o out/heap.o src/heap.cpp
+out/kernel_tests.o:
+	$(CC) $(CFLAGS) -o out/kernel_tests.o src/kernel_tests.cpp
 
 #link togheter startup segment and kernel code 
 out/myos.bin:

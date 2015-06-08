@@ -7,9 +7,10 @@
 #include <paging.h>
 #include <heap.h>
 
+#include <kernel_tests.h>
 void startup_checklist();
 void init_devices();
-
+void init_memory_management();
 void startup_checklist(multiboot_info_t* mbd) {
 	//Init the vga driver, needed by all things
 	init_video();
@@ -33,7 +34,8 @@ void startup_checklist(multiboot_info_t* mbd) {
 	
 	//Detect memory
 	init_memory_map(mbd);
-	
+	//Init frame allocator and paging
+	init_memory_management();
 }
 
 void init_devices() {
@@ -56,18 +58,6 @@ extern "C" void kernel_main(multiboot_info_t* mbd, unsigned int magic) {
 	startup_checklist(mbd);
 	cls();
 	puts("Welcome to PizOS 0.0000000.....000001\n");
-	init_memory_management();
 	
-	unsigned long memory_size = 4096*4;
-	putf("Total heap size is %d\n",&memory_size);
-	unsigned char* memory = (unsigned char*)fmalloc(memory_size);
-	
-	Heap heap(memory,memory_size);
-	int* x = (int*)heap.allocate(sizeof(int));
-	int* y = (int*)heap.allocate(sizeof(int));
-	heap.printHeap();
-	heap.free(x);
-	puts("---------------------------\n");
-	heap.printHeap();
 	putnl();puts("DONE");
 }
