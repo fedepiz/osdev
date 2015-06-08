@@ -181,7 +181,10 @@ void putvar(char c,void* value) {
 	} else if (c == 'u'){
 		unsigned long *ptr = (unsigned long*)value;
 		putn(*ptr);
-	} else if (c == 'h') {
+	} else if (c == 'i'){
+		unsigned short *ptr = (unsigned short*)value;
+		puth(*ptr);
+	}else if (c == 'h') {
 		unsigned long *ptr = (unsigned long*)value;
 		puth(*ptr);
 	} else if (c == 's'){

@@ -109,7 +109,7 @@ unsigned long Heap::getMemorySize() {
 void print_heap_block_tag(heap_block_tag* header) {
 	unsigned long addr = (unsigned long)header;
 	void* arr[] = {&addr, &header->size, &header->magic };
-	putf("Structure of header at %h: size = %d, magic = %h\n",arr);
+	putf("Structure of header at %h: size = %d, magic = %i\n",arr);
 }
 
 void Heap::printHeap() {
