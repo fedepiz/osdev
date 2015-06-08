@@ -31,7 +31,7 @@ public:
 	void merge_blocks(unsigned char* ptr1, unsigned char* ptr2);
 	//Permanent stuff
 	unsigned char* allocate(unsigned long size);
-	void free(unsigned char* ptr);
+	void free(void* ptr);
 	unsigned char* first_free_block(unsigned long min_payload_size);
 	//Debug stuff
 	void printHeap();

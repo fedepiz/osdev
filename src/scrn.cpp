@@ -187,6 +187,9 @@ void putvar(char c,void* value) {
 	}else if (c == 'h') {
 		unsigned long *ptr = (unsigned long*)value;
 		puth(*ptr);
+	} else if (c == 'b'){
+		bool *ptr = (bool*)value;
+		putbool(*ptr);
 	} else if (c == 's'){
 		char* ptr = (char*)value;
 		puts(ptr);

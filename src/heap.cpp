@@ -87,8 +87,16 @@ unsigned char* Heap::allocate(unsigned long payload_size) {
 	tag->taken = true;
 	return ptr + sizeof(heap_block_tag);
 }
-void Heap::free(unsigned char* ptr) {
-	
+void Heap::free(void* p) {
+	unsigned char* ptr = (unsigned char*)p;
+	ptr = ptr - sizeof(heap_block_tag);
+	heap_block_tag* tag = (heap_block_tag*)ptr;
+	tag->taken = false;
+	unsigned char* next = this->next_block(ptr);
+	heap_block_tag* next_tag = (heap_block_tag*)next;
+	if(!next_tag->taken) {
+		this->merge_blocks(ptr,next);
+	}
 }
 
 Heap::Heap(unsigned char* memory,unsigned long memory_size) {
@@ -108,8 +116,8 @@ unsigned long Heap::getMemorySize() {
 //Debug stuff
 void print_heap_block_tag(heap_block_tag* header) {
 	unsigned long addr = (unsigned long)header;
-	void* arr[] = {&addr, &header->size, &header->magic };
-	putf("Structure of header at %h: size = %d, magic = %i\n",arr);
+	void* arr[] = {&addr, &header->size, &header->magic, &header->taken };
+	putf("Structure of header at %h: size = %d, magic = %i, taken = %b\n",arr);
 }
 
 void Heap::printHeap() {

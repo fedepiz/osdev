@@ -66,8 +66,8 @@ extern "C" void kernel_main(multiboot_info_t* mbd, unsigned int magic) {
 	int* x = (int*)heap.allocate(sizeof(int));
 	int* y = (int*)heap.allocate(sizeof(int));
 	heap.printHeap();
-	
-	putf("Address of x: %h\n",&x);
-	putf("Address of y: %h\n",&y);
+	heap.free(x);
+	puts("---------------------------\n");
+	heap.printHeap();
 	putnl();puts("DONE");
 }
