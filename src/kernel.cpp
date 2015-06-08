@@ -52,11 +52,34 @@ void init_memory_management() {
 	init_paging(holder);
 }
 
+void print_header(heap_block_tag* header) {
+	unsigned long addr = (unsigned long)header;
+	void* arr[] = {&addr, &header->size, &header->magic };
+	putf("Structure of header at %h: size = %d, magic = %h\n",arr);
+}
+
 extern "C" void kernel_main(multiboot_info_t* mbd, unsigned int magic) {
 	startup_checklist(mbd);
 	cls();
 	puts("Welcome to PizOS 0.0000000.....000001\n");
 	init_memory_management();
-	putn(sizeof(heap_block_tag));
+	
+	unsigned long memory_size = 4096*4;
+	putf("Total heap size is %d\n",&memory_size);
+	unsigned char* memory = (unsigned char*)fmalloc(memory_size);
+	
+	Heap heap(memory,memory_size);
+	heap.insert_block(memory,memory_size);
+	print_header((heap_block_tag*)memory);
+	puts("\n\n");
+	
+	putbool(heap.split_block(memory,4096));
+	putnl();
+	
+	print_header((heap_block_tag*)memory);
+	print_header((heap_block_tag*)(memory + 4096));
+	
+	print_header((heap_block_tag*)heap.first_free_block(4096));
+	
 	putnl();puts("DONE");
 }
