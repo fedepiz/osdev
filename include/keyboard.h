@@ -12,7 +12,6 @@ void set_keyboard_echo(bool status);
 bool get_key_status(int scancode);
 keyboard_status get_keyboard_status();
 
-
 unsigned char const kbdus[128] =
 {
     0,  27, '1', '2', '3', '4', '5', '6', '7', '8',	/* 9 */

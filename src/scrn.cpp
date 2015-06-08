@@ -196,7 +196,9 @@ void putf(char* format,void** values) {
 	while(format[index] != 0) {
 		if(format[index] == '%') {
 			format++;
-			if(format[index] == '%') {
+			if (format[index] == 0) {
+				return;
+			} else if(format[index] == '%') {
 				putch('%');
 			} else {
 				putvar(format[index],values[val_index]);

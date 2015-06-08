@@ -38,7 +38,7 @@ void startup_checklist(multiboot_info_t* mbd) {
 void init_devices() {
 	timer_install();
 	keyboard_install();
-	set_keyboard_echo(true);
+	set_keyboard_echo(false);
 }
 
 void init_memory_management() {
@@ -56,7 +56,6 @@ extern "C" void kernel_main(multiboot_info_t* mbd, unsigned int magic) {
 	cls();
 	puts("Welcome to PizOS 0.0000000.....000001\n");
 	init_memory_management();
-	int x = 5;
-	putf("Lets test putf, %d\n", &x);
+	
 	putnl();puts("DONE");
 }

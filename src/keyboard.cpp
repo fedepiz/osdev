@@ -1,7 +1,15 @@
 #include <system.h>
 #include <keyboard.h>
 unsigned char kbstatus[128];
-bool _keyboard_echo;
+bool _keyboard_echo = false;
+bool _keyboard_inited = false;
+
+//getch_called is used as a synchronisation
+//variable between getch and the keyboard 
+//interrupt.
+volatile bool _getch_called = false;
+char _getch_char = '\0';
+
 void set_keyboard_echo(bool status) {
 	_keyboard_echo = status;
 }
@@ -43,6 +51,11 @@ void keyboard_handler(struct regs *r)
 		}
 		//Updates interal keyboard status
 		kbstatus[scancode] = 1;
+		
+		if(_getch_called) {
+			_getch_char = kbdus[scancode];
+			_getch_called = false;
+		}
 	}
 }
 
@@ -56,8 +69,39 @@ keyboard_status get_keyboard_status() {
 	return k;
 }
 
+char getch() {
+	if(!_keyboard_inited)
+		return '\0';
+	_getch_called = true;
+	while(true) {
+		if(_getch_called == false)
+			break;
+	}
+	return _getch_char;
+}
+
+char* gets(char* dest) {
+	int index = 0;
+	while(true) {
+		char c = getch();
+		putch(c);
+		if (c == 0 || c == '\n') {
+			dest[index] = '\0';
+			return dest;
+		} else {
+			dest[index] = c;
+			index++;
+		}
+	}
+}
+
+
+
 void keyboard_install() {
 	_keyboard_echo = false;
+	_keyboard_inited = true;
+	_getch_called = false;
+	_getch_char = '\0';
 	memset((unsigned char*)&kbstatus,0,128);
 	irq_install_handler(1, &keyboard_handler);
 }

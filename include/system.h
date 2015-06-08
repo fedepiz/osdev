@@ -41,6 +41,10 @@ void putf(char* format,void* one);
 void settextcolor(unsigned char forecolor, unsigned char backcolor);
 void init_video();
 
+//Common keyboard
+char getch();
+char* gets(char* dest);
+
 //GDT
 void gdt_install();
 //IDT
