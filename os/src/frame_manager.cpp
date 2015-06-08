@@ -103,9 +103,9 @@ void* fmalloc(int size) {
 	return (void*)(frame_address(index));
 }
 
-void ffree(void* ptr) {
+void ffree(void* ptr,int size) {
 	int index = frame_id((unsigned long)ptr);
-	int count = (unsigned long)ptr / frame_size;
+	int count = size / frame_size;
 	if((unsigned long)ptr % frame_size)
 		count++;
 	free_n_frames(index,count);
