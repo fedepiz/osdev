@@ -53,11 +53,14 @@ void init_memory_management() {
 	//Initialize tables at given address, and turn paging on. The
 	//whole memory space should be identity paged.
 	init_paging(holder);
+	//Initialize kernel heap
+	init_kernel_heap();
 }
 
 extern "C" void kernel_main(multiboot_info_t* mbd, unsigned int magic) {
 	startup_checklist(mbd);
 	cls();
 	puts("Welcome to PizOS 0.0000000.....000001\n");
+	
 	putnl();puts("DONE");
 }

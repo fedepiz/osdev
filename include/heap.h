@@ -36,4 +36,11 @@ public:
 		//Debug stuff
 	void printHeap();
 };
+
+//KMALLOC & Initialization
+unsigned char* kmalloc(unsigned long size);
+void kfree(void* ptr);
+void init_kernel_heap();
+Heap* getKernelHeap();
+
 #endif
