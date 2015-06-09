@@ -93,9 +93,18 @@ void Heap::free(void* p) {
 	heap_block_tag* tag = (heap_block_tag*)ptr;
 	tag->taken = false;
 	unsigned char* next = this->next_block(ptr);
-	heap_block_tag* next_tag = (heap_block_tag*)next;
-	if(!next_tag->taken) {
-		this->merge_blocks(ptr,next);
+	if(next != 0) {
+		heap_block_tag* next_tag = (heap_block_tag*)next;
+		if(!next_tag->taken) {
+			this->merge_blocks(ptr,next);
+		}
+	}
+	unsigned char* prev = this->previous_block(ptr);
+	if(prev != 0) {
+		heap_block_tag* prev_tag = (heap_block_tag*)prev;
+		if(!prev_tag->taken) {
+			this->merge_blocks(prev,ptr);
+		}
 	}
 }
 
