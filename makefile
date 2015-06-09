@@ -14,9 +14,9 @@ ISOFLAGS = -no-emul-boot -boot-load-size 4 -boot-info-table
 # src/X.cpp -> out/X.out
 C_OBJS = $(patsubst src/%.cpp,out/%.o,$(wildcard src/*.cpp))
 
-all: outdir out/boot.o $(C_OBJS) out/myos.bin out/bootable.iso
+all: out out/boot.o $(C_OBJS) out/myos.bin out/bootable.iso
 #make output directory
-outdir:
+out:
 	mkdir out
 #assemble startup segment
 out/boot.o:

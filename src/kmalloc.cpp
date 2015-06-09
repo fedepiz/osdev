@@ -6,7 +6,7 @@ Heap kernel_heap(0,0);
 
 void init_kernel_heap() {
 	unsigned long heap_size = 256*4096;
-	unsigned char* memory_ptr = (unsigned char*)fmalloc(heap_size);//256 pages = 1MB
+	unsigned char* memory_ptr = (unsigned char*)fmalloc(heap_size,0xD0000000);//256 pages = 1MB
 	Heap kh(memory_ptr,heap_size);
 	kernel_heap = kh;
 }

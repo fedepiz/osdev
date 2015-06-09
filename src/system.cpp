@@ -98,13 +98,46 @@ char* itoa_base(int num, char* str,int base) {
     return str;
 }
 
+char* itoa_base_u(unsigned long num, char* str,int base) {
+	    int i = 0;
+    bool isNegative = false;
+ 
+    /* Handle 0 explicitely, otherwise empty string is printed for 0 */
+    if (num == 0)
+    {
+        str[i++] = '0';
+        str[i] = '\0';
+        return str;
+    }
+ 
+    // Process individual digits
+    while (num != 0)
+    {
+        unsigned long rem = num % base;
+        str[i++] = (rem > 9)? (rem-10) + 'a' : rem + '0';
+        num = num/base;
+    }
+ 
+    // If number is negative, append '-'
+    if (isNegative)
+        str[i++] = '-';
+ 
+    str[i] = '\0'; // Append string terminator
+ 
+    // Reverse the string
+    reverse(str, i);
+ 
+    return str;
+}
+
+
 char* itoa(int num, char* str)
 {
 	return itoa_base(num,str,10);
 }
 
 char* itoa_hex(int num, char* str) {
-	return itoa_base(num,str,16);
+	return itoa_base_u(num,str,16);
 }
 
 unsigned char inportb (unsigned short _port) {

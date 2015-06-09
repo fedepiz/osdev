@@ -52,3 +52,7 @@ void heap_test_x_y_z() {
 	puts("---------------------------\n");
 	heap.printHeap();
 }
+
+void frame_allocator_printout() {
+		print_frame_map();
+}

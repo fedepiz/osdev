@@ -9,9 +9,11 @@ void init_frame_manager();
 //fmalloc allocate a sequence of frames which span the given size.
 //ffree frees the frames started at the given pointer.
 void* fmalloc(int size);
+void* fmalloc(int size,unsigned long address);
 void ffree(void* ptr,int count);
 
 //Diagnostics
 int first_free_n_id(int n);
 int get_last_kernel_frame();
+void print_frame_map();
 #endif

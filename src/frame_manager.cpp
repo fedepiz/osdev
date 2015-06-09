@@ -19,6 +19,13 @@ unsigned long frame_id(unsigned long addr) {
 	return frame_aligned_address(addr)/frame_size;
 }
 
+int frames_required(unsigned long size) {
+	unsigned int n = size / frame_size;
+	if (size % frame_size > 0)
+		n++;
+	return n;
+}
+
 int get_last_kernel_frame() {
 	return frame_id(kernel_limit);
 }
@@ -94,10 +101,23 @@ void free_n_frames(int index,int n) {
 	}
 }
 
+void* fmalloc(int size,unsigned long address) {
+	unsigned long f_id = frame_id(address);
+	unsigned long count = frames_required(size);
+	bool all_free = true;
+	for(unsigned int i = 0; i < count;i++) {
+		all_free &= is_frame_free(f_id + i);
+	}
+	if(all_free) {
+		allocate_n_frames(f_id,count);
+		return (void*)(f_id * frame_size);
+	} else {
+		return 0;
+	}
+}
+
 void* fmalloc(int size) {
-	unsigned int n = size / frame_size;
-	if (size % frame_size > 0)
-		n++;
+	unsigned int n = frames_required(size);
 	int index = first_free_n_id(n);
 	allocate_n_frames(index,n);
 	return (void*)(frame_address(index));
@@ -105,9 +125,7 @@ void* fmalloc(int size) {
 
 void ffree(void* ptr,int size) {
 	int index = frame_id((unsigned long)ptr);
-	int count = size / frame_size;
-	if((unsigned long)ptr % frame_size)
-		count++;
+	int count = frames_required(size);
 	free_n_frames(index,count);
 }
 
@@ -119,5 +137,33 @@ void init_frame_manager() {
 		} else {
 			frame_map[i] = non_allocated_frame();
 		}
+	}
+}
+
+void print_range(int start,int end,bool used) {
+	unsigned long addr_start = start*4096;
+	unsigned long addr_end  = end*4096;
+	void* arr[] = {&addr_start, &start, &addr_end, &end, &used};
+	putf("start=%h(%d),end=%h(%d),alloc=%b\n",arr);
+}
+
+void print_frame_map() {
+	bool prev_used = true;
+	int range_base = 0;
+	puts("Frame allocator map\n");
+	for(int i = 0; i < num_frames;i++) {
+		bool current_used = !is_frame_free(i);
+		if(prev_used & current_used) {
+			//Nothing happens
+		} else if (prev_used & !current_used) {
+			print_range(range_base,i-1,true);
+			range_base = i;
+		} else if (!prev_used & current_used) {
+			print_range(range_base,i-1,false);
+			range_base = i;
+		} else {
+			//Nothing happens
+		}
+		prev_used = current_used;
 	}
 }
