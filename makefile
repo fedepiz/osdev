@@ -13,8 +13,8 @@ C_OBJS = out/kernel.o out/system.o out/scrn.o out/gdt.o  out/idt.o out/isr.o \
          out/irq.o out/timer.o out/keyboard.o out/mmap.o \
 		 out/frame_manager.o out/paging.o out/heap.o out/kernel_tests.o
 
-all: out out/boot.o $(C_OBJS) out/myos.bin out/bootable.iso
-out:
+all: outdir out/boot.o $(C_OBJS) out/myos.bin out/bootable.iso
+outdir:
 	mkdir out
 #assemble startup segment
 out/boot.o:
@@ -22,7 +22,6 @@ out/boot.o:
 #compile c sources
 out/%.o: src/%.cpp
 	$(CC) $(CFLAGS) -o $@ $<
-
 #link togheter startup segment and kernel code 
 out/myos.bin:
 	$(CC) -T src/linker.ld -o out/myos.bin $(LINKFLAGS) out/boot.o $(C_OBJS)
