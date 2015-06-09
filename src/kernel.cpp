@@ -1,6 +1,7 @@
 #include <system.h>
 #include <multiboot.h>
 #include <mmap.h>
+#include <screen.h>
 #include <timer.h>
 #include <keyboard.h>
 #include <frame_manager.h>

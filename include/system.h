@@ -29,7 +29,7 @@ struct regs {
 	unsigned int int_no, err_code;
 	unsigned int eip, cs, eflags, useresp, ss;
 };
-//VGA
+//Textual output
 void cls();
 void putch(char c);
 void puts(char *str);
@@ -40,8 +40,6 @@ void putnl();
 void putbool(bool t);
 void putf(char* format,void** values);
 void putf(char* format,void* one);
-void settextcolor(unsigned char forecolor, unsigned char backcolor);
-void init_video();
 
 //Common keyboard
 char getch();
