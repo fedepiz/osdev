@@ -9,17 +9,19 @@ CFLAGS = -c -I$(INCLUDE_DIR) -ffreestanding -nostdlib -O2 -Wall -Wextra -Wno-wri
 LINKFLAGS = -ffreestanding -nostdlib -O0 -Wall -Wextra -fno-exceptions -fno-rtti
 ISOFLAGS = -no-emul-boot -boot-load-size 4 -boot-info-table
 
-C_OBJS = out/kernel.o out/system.o out/scrn.o out/gdt.o  out/idt.o out/isr.o \
-         out/irq.o out/timer.o out/keyboard.o out/mmap.o \
-		 out/frame_manager.o out/paging.o out/heap.o out/kernel_tests.o
+#This gathers the names of all the .cpp files in src,
+#replaces their directory with out and their extension with out.
+# src/X.cpp -> out/X.out
+C_OBJS = $(patsubst src/%.cpp,out/%.o,$(wildcard src/*.cpp))
 
 all: outdir out/boot.o $(C_OBJS) out/myos.bin out/bootable.iso
+#make output directory
 outdir:
 	mkdir out
 #assemble startup segment
 out/boot.o:
 	nasm -f elf32 src/start.asm -o out/boot.o
-#compile c sources
+#compile c++ sources, individually
 out/%.o: src/%.cpp
 	$(CC) $(CFLAGS) -o $@ $<
 #link togheter startup segment and kernel code 
